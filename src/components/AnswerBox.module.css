@@ -1,0 +1,27 @@
+.answer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.text {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.text:empty {
+  display: none;
+}
+
+.code {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre;
+  border: 1px solid rgba(255,255,255,0.08);
+}
