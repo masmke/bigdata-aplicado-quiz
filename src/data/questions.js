@@ -475,4 +475,92 @@ Google Looker Studio → "Navaja suiza elegante y conectada": dashboards element
 
 Tableau → "Estudio de diseño gráfico para datos": gráficos vistosos para artistas de datos.`,
   },
+
+  // ── PREGUNTAS CLAVE AÑADIDAS ─────────────────────────────────────────────────
+  {
+    t: 0,
+    q: "Justifica la elección entre un Data Lake y un Data Warehouse para un proyecto de Smart City con orígenes de datos heterogéneos, utilizando los conceptos de 'Schema-on-Read' y 'Schema-on-Write'.",
+    hint: "¿Qué pasa si intentas meter un vídeo de tráfico, un JSON de sensores y un CSV de facturación en un DW con Schema-on-Write?",
+    a: `Para una Smart City con datos heterogéneos (sensores, imágenes, JSON, CSV de distintas fuentes), la elección correcta es el Data Lake con Schema-on-Read.
+
+Por qué no el Data Warehouse (Schema-on-Write):
+• Exige catalogar y estructurar ANTES de guardar. Con decenas de formatos distintos y cambiantes, el proceso de modelado sería infinito y frágil.
+• Cualquier dato nuevo que no encaje en el esquema ya definido es rechazado o requiere una migración costosa.
+
+Por qué sí el Data Lake (Schema-on-Read):
+• Almacena absolutamente cualquier dato en su formato original, sin transformación previa.
+• La estructura se aplica solo en el momento del análisis, permitiendo explorar datos históricos con perspectivas futuras que aún no conocemos.
+• Escala horizontalmente para absorber los volúmenes masivos e imprevisibles de la ciudad.
+
+Conclusión: en un entorno donde la variedad y la velocidad de nuevos formatos es constante, el Data Lake es la única arquitectura sostenible.`,
+  },
+  {
+    t: 0,
+    q: "Diseña el almacenamiento para: un sistema transaccional de facturación y un histórico masivo de logs de navegación para entrenar modelos ML.",
+    hint: "Uno necesita ACID y transacciones rápidas; el otro necesita escala infinita y ficheros crudos.",
+    a: `Sistema transaccional de facturación → Base de Datos SQL (Relacional):
+• Entorno OLTP: requiere transacciones atómicas, consistencia ACID y acceso ultrarrápido a registros individuales.
+• El esquema rígido garantiza la integridad de los datos financieros.
+
+Histórico masivo de logs de navegación para ML → Data Lake:
+• Volumen virtualmente ilimitado de ficheros semiestructurados o no estructurados.
+• Arquitectura OLAP: lecturas analíticas masivas para feature engineering y entrenamiento de modelos.
+• Escalabilidad horizontal para absorber años de histórico sin degradar el rendimiento.`,
+  },
+  {
+    t: 0,
+    q: "¿Por qué Parquet es el 'superhéroe' del Data Lake frente a CSV o JSON? Explica su ventaja más importante con una analogía.",
+    hint: "¿Qué tiene que hacer un CSV para darte solo una columna? ¿Y Parquet?",
+    a: `CSV y JSON son formatos de texto: pesados, frágiles y sin estructura interna que permita leer selectivamente.
+
+Parquet es un formato binario columnar, el estándar para analítica Big Data porque:
+
+1. Lectura selectiva: si necesitas solo la columna "velocidad", Parquet la lee directamente sin tocar el resto. CSV tiene que recorrer TODAS las filas para extraer ese dato.
+
+2. Compresión brutal: al agrupar datos del mismo tipo, los algoritmos comprimen mucho mejor. Los ficheros Parquet son 5-10x más pequeños.
+
+3. Autoescriptivo: lleva el esquema incrustado (sabe qué es cada columna y de qué tipo).
+
+Analogía: CSV es un libro de texto donde tienes que leer cada página para encontrar una palabra. Parquet es un índice que te lleva directamente al capítulo exacto.`,
+  },
+  {
+    t: 2,
+    q: "¿Qué función cumple el fichero _SUCCESS en un Data Lake y qué Regla de Oro se deriva para cualquier pipeline de producción?",
+    hint: "¿Qué ocurre si un job de Spark falla a mitad de escritura? ¿Cómo sabes si la carpeta está completa?",
+    a: `El problema: un job distribuido de Spark puede fallar a mitad de la escritura, dejando una carpeta con ficheros corruptos o incompletos que parecen válidos desde fuera.
+
+La solución de Spark: al finalizar con ÉXITO la escritura completa, crea automáticamente un fichero vacío llamado _SUCCESS en la carpeta de destino. Es una señal atómica de "todo ha ido bien".
+
+La Regla de Oro para pipelines de producción:
+→ NUNCA iniciar la lectura de una carpeta sin verificar primero la existencia de _SUCCESS.
+
+Si el archivo no está presente, el pipeline debe detenerse inmediatamente y no continuar con los pasos siguientes, evitando propagar datos corruptos o incompletos aguas abajo.`,
+  },
+];
+
+// ── IDs de las preguntas más importantes para el examen ──────────────────────
+// Indices en QUESTIONS (0-based) que deben aparecer en el modo "⭐ Más Importantes"
+export const IMPORTANT_IDS = [
+  1,   // Diseña almacenamiento tres sistemas (SQL/NoSQL/DataLake)
+  2,   // Define el papel de Apache Spark vs motor SQL clásico
+  3,   // CSV/JSON vs Parquet – diseño columnar
+  10,  // Spark vs MapReduce – justificación técnica
+  11,  // Fraude + panel analítico: Flink vs Spark Streaming/Micro-Batch
+  12,  // Ecosistema Spark: Core, SQL, MLlib
+  13,  // Apache Pig → DataFrames, Optimizador Catalyst
+  20,  // Ad-Hoc vs Framework Declarativo para calidad
+  21,  // Riesgo datos incompletos + archivo _SUCCESS
+  22,  // Completitud, Validez y Consistencia en Smart City
+  23,  // Regla de las 3 Desviaciones Estándar
+  30,  // Flujo resolución de incidentes (alerta → métricas → logs)
+  31,  // Logs vs Métricas: formato, volumen, alertas
+  32,  // SLI, SLO y Alerta – ejemplo sensores tráfico
+  33,  // Prometheus + Grafana: scraping y visualización
+  40,  // Power BI directamente al Data Lake → error + Data Mart
+  41,  // Ayuntamiento: DAX complejo vs panel operativo inmediato
+  42,  // Gráficos específicos (Scatter/Mapa/Barras/Líneas) + Regla de Oro
+  50,  // Data Lake vs Data Warehouse para Smart City heterogénea
+  51,  // Almacenamiento: facturación transaccional + logs ML
+  52,  // Parquet como superhéroe del Data Lake
+  53,  // Función del fichero _SUCCESS y Regla de Oro del pipeline
 ];

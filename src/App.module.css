@@ -59,6 +59,18 @@
   font-weight: 600;
 }
 
+.modeBtn.importantBtn {
+  border-color: #f0a500;
+  color: #f0a500;
+}
+
+.modeBtn.importantBtn.active {
+  background: rgba(240, 165, 0, 0.12);
+  border-color: #f0a500;
+  color: #f0a500;
+  font-weight: 700;
+}
+
 .startBtn {
   padding: 0.85rem 2.5rem;
   border-radius: var(--radius);

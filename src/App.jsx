@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { QUESTIONS as questions, TOPICS as TOPIC_LIST } from './data/questions'
+import { QUESTIONS as questions, TOPICS as TOPIC_LIST, IMPORTANT_IDS } from './data/questions'
 import { useProgress } from './hooks/useProgress'
 import QuizCard from './components/QuizCard'
 import ScorePanel from './components/ScorePanel'
@@ -14,7 +14,9 @@ function buildQueue(mode, topicFilter, progress) {
     .map((q, i) => ({ ...q, index: i }))
     .filter(q => topicFilter === 'all' || q.t === topicFilter)
 
-  if (mode === 'failed') {
+  if (mode === 'important') {
+    pool = pool.filter(q => IMPORTANT_IDS.includes(q.index))
+  } else if (mode === 'failed') {
     pool = pool.filter(q => progress[q.index] === 'fail' || !progress[q.index])
   }
   if (mode === 'random') {
@@ -121,13 +123,18 @@ export default function App() {
           onChange={v => setTopicFilter(v)}
         />
         <div className={styles.modes}>
-          {['sequential', 'random', 'failed'].map(m => (
+          {[
+            { id: 'sequential', label: 'Secuencial' },
+            { id: 'random',     label: 'Aleatorio' },
+            { id: 'failed',     label: 'Solo falladas' },
+            { id: 'important',  label: '⭐ Más Importantes' },
+          ].map(({ id, label }) => (
             <button
-              key={m}
-              className={`${styles.modeBtn} ${mode === m ? styles.active : ''}`}
-              onClick={() => setMode(m)}
+              key={id}
+              className={`${styles.modeBtn} ${mode === id ? styles.active : ''} ${id === 'important' ? styles.importantBtn : ''}`}
+              onClick={() => setMode(id)}
             >
-              {m === 'sequential' ? 'Secuencial' : m === 'random' ? 'Aleatorio' : 'Solo falladas'}
+              {label}
             </button>
           ))}
         </div>
